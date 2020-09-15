@@ -41,8 +41,13 @@ struct  COUNT_T    ///< order no counter
 extern OPT_T    OPTS;
 extern STAT_T   STAT;
 extern COUNT_T  COUNT;
+#ifdef MEM
+extern TxMAP_T   TxDB;
+extern AddrMAP_T AddrDB;
+#else
 extern TxDB_T   TxDB;
 extern AddrDB_T AddrDB;
+#endif
 extern time_t   start_time;
 
 #endif // BCE3_H

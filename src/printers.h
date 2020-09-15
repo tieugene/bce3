@@ -3,6 +3,8 @@
 
 #include <bitcoin/bitcoin.hpp>
 
+const string TAB = "\t";
+
 void    __out_bk(const bc::chain::block &);
 void    __out_tx(const bc::chain::transaction &);
 void    __out_vin(const bc::chain::input &);

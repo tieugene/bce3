@@ -51,7 +51,7 @@ bool    parse_tx(const bc::chain::transaction &tx)
         __prn_tx(tx);
     }
     if (job_mode()) {
-      COUNT.tx = TxDB.add(hash);
+      COUNT.tx = TxDB.add(hash);    // FIXME: map linker error
       if (COUNT.tx == NOT_FOUND_U32) {
         cerr << "Can't add tx " << bc::encode_hash(hash) << endl;
         return false;
@@ -107,15 +107,15 @@ bool    parse_vout(const bc::chain::output &vout)
     addrs_per_vout = addrs.size();
     update_stat(STAT.addrs, STAT.max_addrs, addrs_per_vout);
     bc::short_hash addr_hashes[addrs_per_vout]; // sizeof=..., ~~.size()~~
-    cerr << "Addrs: sizeof " << sizeof(addr_hashes) << endl;
+    //cerr << "Addrs: sizeof " << sizeof(addr_hashes) << endl;
     size_t i = 0;
     for (auto addr = addrs.begin(); addr != addrs.end(); addr++) {
       addr_strings.push_back(addr->encoded());
       addr_hashes[i++] = addr->hash();
       parse_addr(*addr);
     }
-    return true;  // FIXME: tmp
-    if (addrs_per_vout) {
+    //return true;  // FIXME: tmp
+    if (addrs_per_vout) {   // 1+ addrs
       if (addrs_per_vout == 1) {
         auto addr_no = AddrDB.get(addr_hashes[0]);
         if (addr_no == NOT_FOUND_U32) {
@@ -139,6 +139,16 @@ bool    parse_vout(const bc::chain::output &vout)
           STAT.uniq_addrs++;
         }*/
       }
+    } else {
+      // scr.to_data(true) - with prefix (script len)
+      // scr.is_valid() == 1
+      // scr.output_pattern() == 10 (non-standard)
+      auto scr = vout.script();
+      cout << "!addr:" <<
+        TAB << STAT.blocks <<
+        TAB << vout.value() <<
+        TAB << bc::encode_base16(scr.to_data(true)) <<
+        endl;
     }
     return true;
 }

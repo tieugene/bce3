@@ -15,12 +15,17 @@ using namespace std;
 OPT_T     OPTS;
 STAT_T    STAT;
 COUNT_T   COUNT;
+#ifdef MEM
+TxMAP_T    TxDB;
+AddrMAP_T  AddrDB;
+#else
 TxDB_T    TxDB;
 AddrDB_T  AddrDB;
+#endif
 time_t    start_time;
 // locals
 // consts
-const uint32_t    BULK_SIZE = 1000;
+const uint32_t    BULK_SIZE = 10000;
 
 struct  FOFF_T      ///< files-offset array
   { uint32_t  fileno, offset; };

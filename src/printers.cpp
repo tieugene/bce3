@@ -4,11 +4,10 @@
 #include <bitcoin/bitcoin.hpp>
 
 #include "bce3.h"
+#include "misc.h"
 #include "printers.h"
 
 using namespace std;
-
-const string TAB = "\t";
 
 void    __out_bk(const bc::chain::block &bk)    ///< Output bk data for "DB"
 {
@@ -86,6 +85,7 @@ void    __prn_interim() {
          TAB << STAT.addrs <<
          TAB << STAT.uniq_addrs <<
          TAB << time(nullptr) - start_time <<
+         TAB << memused() <<
     endl;
 }
 

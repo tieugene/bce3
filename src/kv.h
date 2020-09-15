@@ -4,39 +4,75 @@
 #include <bitcoin/bitcoin.hpp>
 #include <kcpolydb.h>
 #include <array>    // FIXME:
+#include <unordered_map>
 
-using namespace std;
-//using namespace kyotocabinet;
+//#define MEM
 
 const uint32_t NOT_FOUND_U32 = 0xFFFFFFFF;
 
-class   KVDB_T {
+using namespace std;
+
+template <typename T> class   KVDB_T {
 protected:
-  uint32_t  counter;
   kyotocabinet::PolyDB     db;
-  uint32_t    __add(void *, size_t);
-  uint32_t    __get(void *, size_t);
 public:
-  KVDB_T      (void) : counter(0) {}
-  bool        init(string &);
-  void        clear();
-  uint32_t    count(void);
+  bool        init(string &s) {
+    return db.open(s, kyotocabinet::PolyDB::OWRITER | kyotocabinet::PolyDB::OCREATE); //  | kyotocabinet::PolyDB::OTRUNCATE
+  }
+  void        clear() { db.clear(); }
+  uint32_t    count(void) {
+    auto retvalue = db.count();
+    return (retvalue < 0) ? NOT_FOUND_U32 : uint32_t(retvalue);
+  }
+  uint32_t    add(T &key) {
+    //auto value = map.emplace(key, value);   // FIXME: emplace() w/ checking retvalue
+    auto value = count();
+    if (value != NOT_FOUND_U32) {
+        void *k_ptr = static_cast<void *>(&key);
+        void *v_ptr = static_cast<void *>(&value);
+        if (!db.add(static_cast<char *>(k_ptr), sizeof(T), static_cast<char *>(v_ptr), sizeof(uint32_t)))
+            value = NOT_FOUND_U32;
+    }
+    return value;
+  } // TODO: short_hash_list
+  uint32_t    get(T &key) {
+    uint32_t value;
+    void *k_ptr = static_cast<void *>(&key);
+    void *v_ptr = static_cast<void *>(&value);
+    auto result = db.get(static_cast<char *>(k_ptr), sizeof(T), static_cast<char *>(v_ptr), sizeof(uint32_t));
+    if (result != sizeof(uint32_t))
+        value = NOT_FOUND_U32;
+    return value;
+  }
 };
 
-class   TxDB_T : public KVDB_T {
-// hash_digest = ... bytes
-public:
-  uint32_t    add(bc::hash_digest &);
-  uint32_t    get(bc::hash_digest &);
+typedef KVDB_T <bc::hash_digest> TxDB_T;
+typedef KVDB_T <bc::short_hash> AddrDB_T;
+
+template <typename T> class KVMAP_T {
+    unordered_map <T, uint32_t> db;
+  public:
+    bool        init(string &) { return true; }
+    void        clear(void) { db.clear(); }
+    uint32_t    count(void) { return db.size(); }
+    uint32_t    get(T &key) {
+      auto value = NOT_FOUND_U32;
+      auto search = db.find(key);
+      if (search != db.end())
+          value = search->second;
+      return value;
+    }
+    uint32_t    add(T &key) {
+      auto value = NOT_FOUND_U32;
+      if (db.find(key) == db.end()) {
+        value = db.size();
+        db.emplace(key, value);
+      }
+      return value;
+    }
 };
 
-class   AddrDB_T : public KVDB_T {
-// short_hash = 20 bytes
-public:
-  uint32_t    add(bc::short_hash &);
-  uint32_t    get(bc::short_hash &);
-  uint32_t    add(bc::short_hash_list &);
-  uint32_t    get(bc::short_hash_list &);
-};
+typedef KVMAP_T <bc::hash_digest> TxMAP_T;
+typedef KVMAP_T <bc::short_hash> AddrMAP_T;
 
 #endif // KV_H

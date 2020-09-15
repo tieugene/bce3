@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <unistd.h>
+#include <sys/resource.h>
 
 #include "bce3.h"
 #include "misc.h"
@@ -91,4 +92,13 @@ void    update_stat(uint32_t &counter, uint32_t &maxer, const uint32_t v) {
     counter += v;
     if (maxer < v)
         maxer = v;
+}
+
+long memused(void) {
+    rusage rused;
+    long retvalue = 0;
+    if (getrusage(RUSAGE_SELF, &rused) == 0) {
+      retvalue = rused.ru_maxrss;
+    }
+    return retvalue;
 }
