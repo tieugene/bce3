@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/resource.h>
 
-#include "bce3.h"
+#include "bce.h"
 #include "misc.h"
 
 using namespace std;

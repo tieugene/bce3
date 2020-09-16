@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <bitcoin/bitcoin.hpp>
 
-#include "bce3.h"
+#include "bce.h"
 #include "misc.h"
 #include "printers.h"
 

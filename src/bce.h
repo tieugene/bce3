@@ -1,5 +1,5 @@
-#ifndef BCE3_H
-#define BCE3_H
+#ifndef BCE_H
+#define BCE_H
 
 #include <iomanip>  // string, uint*
 #include <ctime>
@@ -50,4 +50,4 @@ extern AddrDB_T AddrDB;
 #endif
 extern time_t   start_time;
 
-#endif // BCE3_H
+#endif // BCE_H
