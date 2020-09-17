@@ -15,7 +15,7 @@ Options:\n\
 -f n      - block starts from (default=0)\n\
 -n n      - blocks to process (default=1, 0=all)\n\
 -d <path> - *.dat folder (default='' - current folder)\n\
--c <path> - cache data folder (default='.')\n\
+-c <path> - cache data folder\n\
 -o        - out results\n\
 -v[n]     - verbose (debug info to stderr):\n\
     0 - errors only (default)\n\

@@ -6,7 +6,7 @@
 #include <array>    // FIXME:
 #include <unordered_map>
 
-//#define MEM
+#define MEM
 
 const uint32_t NOT_FOUND_U32 = 0xFFFFFFFF;
 

@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <time.h>
 #include <unistd.h>
 #include <bitcoin/bitcoin.hpp>
 
@@ -11,14 +12,19 @@ using namespace std;
 
 void    __out_bk(const bc::chain::block &bk)    ///< Output bk data for "DB"
 {
-    time_t t = static_cast<time_t>(bk.header().timestamp());
-    cout << "b" << TAB << COUNT.bk << TAB << "'" << put_time(gmtime(&t), "%Y-%m-%d %OH:%OM:%OS") << "'" << endl;
+  time_t t = static_cast<time_t>(bk.header().timestamp());
+  char dt[20];
+  strftime(dt, 20, "%Y-%m-%d %OH:%OM:%OS", gmtime(&t));
+  printf("b\t%u\t'%s's\n", COUNT.bk, dt);
+  // cout << "b" << TAB << COUNT.bk << TAB << "'" << put_time(gmtime(&t), "%Y-%m-%d %OH:%OM:%OS") << "'" << endl;
 }
 
 void    __out_tx(const bc::chain::transaction &tx) {}
 
 void    __out_vin(const bc::chain::input &vin) {}
+
 void    __out_vout(const bc::chain::output &vout) {}
+
 void    __out_addr(const bc::wallet::payment_address &addr) {}
 
 void    __prn_bk(const bc::chain::block &bk)
